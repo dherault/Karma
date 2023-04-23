@@ -69,6 +69,54 @@ export default extendTheme({
       950: '#482100',
     },
   },
+  fontConfig: {
+    Anton: {
+      100: {
+        normal: 'Anton',
+      },
+      200: {
+        normal: 'Anton',
+      },
+      300: {
+        normal: 'Anton',
+      },
+      400: {
+        normal: 'Anton',
+      },
+      500: {
+        normal: 'Anton',
+      },
+      600: {
+        normal: 'Anton',
+      },
+      700: {
+        normal: 'Anton',
+      },
+      800: {
+        normal: 'Anton',
+      },
+      900: {
+        normal: 'Anton',
+      },
+      // Add more variants
+      //   700: {
+      //     normal: 'Anton-Bold',
+      //   },
+      //   800: {
+      //     normal: 'Anton-Bold',
+      //   },
+      //   900: {
+      //     normal: 'Anton-Bold',
+      //   },
+    },
+  },
+
+  // Make sure values below matches any of the keys in `fontConfig`
+  fonts: {
+    heading: 'Anton',
+    // body: 'Anton',
+    // mono: 'Anton',
+  },
   components: {
     Button: {
       defaultProps: {
@@ -128,10 +176,29 @@ export default extendTheme({
           theme,
         }) => ({
           borderWidth: '1',
-          borderColor: `${colorScheme}.600`,
+          borderColor: `${colorScheme}.500`,
           _focus: {
-            borderColor: `${colorScheme}.600`,
-            bg: themeTools.transparentize(`${colorScheme}.600`, 0.05)(theme),
+            borderColor: `${colorScheme}.500`,
+            bg: themeTools.transparentize(`${colorScheme}.500`, 0.05)(theme),
+          },
+        }),
+      },
+    },
+    TextArea: {
+      defaultProps: {
+        colorScheme: 'blue',
+        variant: 'outline-blue',
+      },
+      variants: {
+        'outline-blue': ({
+          colorScheme,
+          theme,
+        }) => ({
+          borderWidth: '1',
+          borderColor: `${colorScheme}.500`,
+          _focus: {
+            borderColor: `${colorScheme}.500`,
+            bg: themeTools.transparentize(`${colorScheme}.500`, 0.05)(theme),
           },
         }),
       },

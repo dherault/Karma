@@ -1,11 +1,11 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { GoogleAuthProvider, browserLocalPersistence, connectAuthEmulator, getAuth, setPersistence } from 'firebase/auth'
+import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore'
+import { connectStorageEmulator, getStorage } from 'firebase/storage'
+// import { ReCaptchaV3Provider, initializeAppCheck } from 'firebase/app-check'
+import { getPerformance } from 'firebase/performance'
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: 'AIzaSyBpJthzr_Tf6J3hhURql_Rew3VNSrKHXxk',
   authDomain: 'karma-systems.firebaseapp.com',
@@ -16,6 +16,35 @@ const firebaseConfig = {
   measurementId: 'G-KTHNN4CJC1',
 }
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig)
-const analytics = getAnalytics(app)
+
+export const auth = getAuth(app)
+
+export const db = getFirestore(app)
+
+export const analytics = getAnalytics(app)
+
+export const storage = getStorage(app)
+
+try {
+  getPerformance(app)
+}
+catch (error) {
+  // performance seems to only work in production
+}
+
+export const persistancePromise = setPersistence(auth, browserLocalPersistence)
+
+export const googleProvider = new GoogleAuthProvider()
+
+// TODO
+// initializeAppCheck(app, {
+//   provider: new ReCaptchaV3Provider('todo'),
+//   isTokenAutoRefreshEnabled: true,
+// })
+
+if (process.env.NODE_ENV === 'development') {
+  connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true })
+  connectFirestoreEmulator(db, 'localhost', 8080)
+  connectStorageEmulator(storage, 'localhost', 9199)
+}

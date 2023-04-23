@@ -1,16 +1,20 @@
-import { Box, Button, Text } from 'native-base'
+import { Box, Button } from 'native-base'
 
 function Home({ navigation }) {
   return (
     <Box
       flex={1}
-      bg="#fff"
       alignItems="center"
       justifyContent="center"
     >
-      <Text>Karma</Text>
       <Button onPress={() => navigation.navigate('Authentication')}>
         Authentication
+      </Button>
+      <Button
+        mt={2}
+        onPress={() => navigation.navigate('Stories')}
+      >
+        Stories
       </Button>
     </Box>
   )
