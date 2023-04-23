@@ -6,9 +6,7 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
-    "emulators": "firebase emulators:start --only auth,functions,firestore,storage,extensions --import=./emulator-data/current-export --export-on-exit=./emulator-data/current-export",
-    "data:import": "firebase emulators:start --only auth,functions,firestore,storage,extensions` --import=./emulator-data/starter-export"
+    "web": "expo start --web"
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
@@ -18,18 +16,19 @@
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
     "expo": "~48.0.11",
+    "expo-app-loading": "^2.1.1",
     "expo-font": "~11.1.1",
-    "expo-image-picker": "^14.1.1",
+    "expo-image-picker": "~14.1.1",
+    "expo-splash-screen": "~0.18.1",
     "expo-status-bar": "~1.4.4",
     "firebase": "^9.20.0",
     "nanoid": "^4.0.2",
     "native-base": "^3.4.28",
     "react": "18.2.0",
     "react-native": "0.71.6",
-    "react-native-safe-area-context": "4.5.0",
-    "react-native-screens": "~3.20.0",
-    "react-native-svg": "13.4.0",
-    "react-native-web": "~0.18.10"
+    "react-native-uuid": "^2.0.1",
+    "react-native-web": "~0.18.10",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
