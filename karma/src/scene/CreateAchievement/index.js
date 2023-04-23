@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AddIcon, Box, Button, FormControl, Icon, Image, Input, Pressable, ScrollView, Text, TextArea, WarningOutlineIcon } from 'native-base'
 import {
   Animated,
@@ -10,6 +10,8 @@ import { AntDesign } from '@expo/vector-icons'
 import uuid from 'react-native-uuid'
 
 import { storage } from '../../firebase'
+
+import AchievementPreview from './AchievementPreview'
 
 async function uploadImageAsync(uri) {
   // Why are we using XMLHttpRequest? See:
@@ -36,12 +38,15 @@ async function uploadImageAsync(uri) {
 }
 
 function CreateAchievement({ navigation }) {
-
   const fadeAnim = useRef(new Animated.Value(0)).current
 
   const [name, setName] = useState('')
+  const [nameError, setNameError] = useState('')
   const [description, setDescription] = useState('')
+  const [descriptionError, setDescriptionError] = useState('')
   const [imageUrls, setImageUrls] = useState([])
+  const [imageError, setImageError] = useState('')
+  const [preview, setPreview] = useState(null)
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -53,7 +58,7 @@ function CreateAchievement({ navigation }) {
   // eslint-disable-next-line
   }, [])
 
-  const addImage = async () => {
+  const addImage = useCallback(async () => {
     const result = await launchImageLibraryAsync({
       mediaTypes: MediaTypeOptions.Images,
       allowsEditing: true,
@@ -65,9 +70,52 @@ function CreateAchievement({ navigation }) {
     const urls = await Promise.all(result.assets.map(asset => uploadImageAsync(asset.uri)))
 
     setImageUrls(x => [...x, ...urls])
-  }
+  }, [])
+
+  const handlePreview = useCallback(async () => {
+    setNameError('')
+    setDescriptionError('')
+    setImageError('')
+
+    const finalName = name.trim()
+
+    if (!finalName) {
+      setNameError('You must name your achievement')
+
+      return
+    }
+
+    const finalDescription = description.trim()
+
+    if (!finalDescription) {
+      setDescriptionError('You must describe your achievement')
+
+      return
+    }
+
+    const createdAt = new Date().toISOString()
+    const achievement = {
+      id: uuid.v4(),
+      name: finalName,
+      description: finalDescription,
+      imageUrls,
+      createdAt,
+      updatedAt: createdAt,
+    }
+
+    setPreview(achievement)
+  }, [name, description, imageUrls])
 
   console.log('imageUrls', imageUrls)
+
+  if (preview) {
+    return (
+      <AchievementPreview
+        achievement={preview}
+        navigation={navigation}
+      />
+    )
+  }
 
   return (
     <Box
@@ -85,7 +133,7 @@ function CreateAchievement({ navigation }) {
           fontSize="4xl"
           color="blue.500"
         >
-          Create Acheivement
+          Create Achievement
         </Text>
         <Box
           width="290px"
@@ -97,6 +145,7 @@ function CreateAchievement({ navigation }) {
               {
                 transform: [{ scaleX: fadeAnim }],
                 transformOrigin: 'left',
+                height: '100%',
               },
             ]}
           >
@@ -107,7 +156,10 @@ function CreateAchievement({ navigation }) {
             />
           </Animated.View>
         </Box>
-        <FormControl mt={4}>
+        <FormControl
+          mt={4}
+          isInvalid={!!nameError}
+        >
           <FormControl.Label>Name your acheivement</FormControl.Label>
           <Input
             value={name}
@@ -115,10 +167,13 @@ function CreateAchievement({ navigation }) {
             placeholder="Today I fed my cat"
           />
           <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-            Try different from previous passwords.
+            {nameError}
           </FormControl.ErrorMessage>
         </FormControl>
-        <FormControl mt={4}>
+        <FormControl
+          mt={4}
+          isInvalid={!!descriptionError}
+        >
           <FormControl.Label>Describe it</FormControl.Label>
           <TextArea
             h={64}
@@ -127,10 +182,13 @@ function CreateAchievement({ navigation }) {
             placeholder="He loved it!"
           />
           <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-            Try different from previous passwords.
+            {descriptionError}
           </FormControl.ErrorMessage>
         </FormControl>
-        <FormControl mt={4}>
+        <FormControl
+          mt={4}
+          isInvalid={!!imageError}
+        >
           <FormControl.Label>Add proof</FormControl.Label>
           {/* <TextArea
           h={64}
@@ -146,21 +204,20 @@ function CreateAchievement({ navigation }) {
             borderColor="blue.500"
             borderWidth={1}
             borderRadius={4}
-            height={24}
           >
             {imageUrls.map(uri => (
               <Image
                 source={{ uri }}
                 key={uri}
                 width="25%"
-                height={20}
+                height={24}
               />
             ))}
             <Pressable
               onPress={addImage}
               _pressed={{ backgroundColor: 'gray.100' }}
               width="25%"
-              height={20}
+              height={24}
               borderRadius={4}
             >
               <Box
@@ -181,9 +238,15 @@ function CreateAchievement({ navigation }) {
             </Pressable>
           </Box>
           <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-            Try different from previous passwords.
+            {imageError}
           </FormControl.ErrorMessage>
         </FormControl>
+        <Button
+          mt={8}
+          onPress={handlePreview}
+        >
+          Preview
+        </Button>
       </ScrollView>
     </Box>
   )
